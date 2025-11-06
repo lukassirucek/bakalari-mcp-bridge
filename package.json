@@ -1,0 +1,11 @@
+{
+  "name": "bakalari-mcp",
+  "version": "1.0.0",
+  "description": "MCP server pro platformu Bakaláři",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kredencos",
+  "license": "ISC"
+}
