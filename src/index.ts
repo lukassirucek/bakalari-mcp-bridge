@@ -37,8 +37,8 @@ async function login(url: string, username: string, password: string) {
 	const data: any = await response.json()
 
 	if (!response.ok) {
-		const errorMsg = data.error_description || data.error || "Unknown error"
-		throw new Error(`Login failed: ${errorMsg}`)
+		const errorMsg = data.error_description || data.error || "neznamá chyba"
+		throw new Error(`Přihlášení selhalo: ${errorMsg}`)
 	}
 
 	return data.access_token
@@ -52,12 +52,12 @@ async function main() {
 	const password = process.env.BAKALARI_PASS
 
 	if (!schoolUrl || !username || !password) {
-		throw new Error("SCHOOL_URL, BAKALARI_USERNAME or BAKALARI_PASS is missing in .env file")
+		throw new Error("SCHOOL_URL, BAKALARI_USERNAME nebo BAKALARI_PASS chybí v .env souboru")
 	}
 
-	console.error("Logging in...")
+	console.error("Přihlašování...")
 	const accessToken = await login(schoolUrl, username, password)
-	console.error("✓ Logged in!")
+	console.error("✓ Přihlášeno!")
 
 	// create server
 	const server = new McpServer({
@@ -74,7 +74,7 @@ async function main() {
 
 	const transport = new StdioServerTransport()
 	await server.connect(transport)
-	console.error("✓ Server is running!")
+	console.error("✓ Server je ready!")
 }
 
 main().catch(error => {

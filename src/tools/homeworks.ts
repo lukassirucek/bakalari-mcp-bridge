@@ -10,10 +10,10 @@ export default function registerHomeworksTool(
     server.registerTool(
         "get_homeworks",
         {
-            description: "Get homeworks from Bakaláři system.",
+            description: "Získá domací úkoly z Bakalářů.",
             inputSchema: {
-                from: z.string().optional().describe("From date (YYYY-MM-DD)"),
-                to: z.string().optional().describe("To date (YYYY-MM-DD)")
+                from: z.string().optional().describe("Od data (YYYY-MM-DD)"),
+                to: z.string().optional().describe("Do data (YYYY-MM-DD)")
             }
         },
         async (args) => {

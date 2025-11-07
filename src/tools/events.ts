@@ -10,9 +10,9 @@ export default function registerEventsTool(
     server.registerTool(
         "get_all_events",
         {
-            description: "Get all events from Bakaláři system.",
+            description: "Ziská všechny akce školy z bakalařů.",
             inputSchema: {
-                from: z.string().optional().describe("From date (YYYY-MM-dd)"),
+                from: z.string().optional().describe("Od data (YYYY-MM-dd)"),
             }
         },
         async (args) => {
@@ -51,9 +51,9 @@ export default function registerEventsTool(
     server.registerTool(
         "get_user_events",
         {
-            description: "Get events only for this user from Bakaláři system.",
+            description: "Získá akce školy pouze pro tohoto uživatele z Bakalářů.",
             inputSchema: {
-                from: z.string().optional().describe("From date (YYYY-MM-dd)"),
+                from: z.string().optional().describe("Od data (YYYY-MM-dd)"),
             }
         },
         async (args) => {

@@ -1,107 +1,115 @@
-# Bakalari MCP Server
+# Bakaláři MCP pro LLM Modely
 
-A simple MCP (Model Context Protocol) server that lets you access Bakalari school system data.
+### **⚠️ Tento projekt je stále ve vývoji a nové nástroje stále přibívají.**
 
-## What is this?
+Jednoduché MCP pro propojení Bakalářů s LLM modely nebo např. Claude for Desktop. Používá [Bakaláři API v3](https://github.com/bakalari-api/bakalari-api-v3/).
 
-This is a beginner-friendly server that connects to the Bakalari school system API and exposes tools for fetching school data like homeworks. It uses the Model Context Protocol to make this data available to AI assistants and other compatible clients.
+## Co je potřeba
 
-## What You Need
+- **Node.js** verze 18 nebo novější
+- **npm** (defalutně v node.js)
+- Funkční účet na Bakalářích
 
-- **Node.js** version 18 or newer
-- **npm** (comes with Node.js)
-- A Bakalari school account
+## Jak nastavit
 
-## Setup Instructions
+### 1. Stáhněte repo
 
-### 1. Install Dependencies
+Stáhněte si repo pomocí tlačítka "Code" -> "Download ZIP" nebo pomocí GITu:
+```bash
+git clone https://github.com/kredencos/bakalari-mcp.git
+```
 
-First, download all the required packages:
+### 2. Stáhněte balíčky
 
+Pro stáhnutí všech balíčku stačí zadat příkaz:
 ```bash
 npm install
 ```
 
-### 2. Configure Your Settings
+### 3. Nastavte .env
 
-Create a file named `.env` in the project root with your credentials:
-
+Stačí přepsat název souboru `.env.example` na `.env` a upravte hodnoty. Příklad:
 ```env
-SCHOOL_URL=https://bakalari.yourschool.cz/
-USERNAME=your_username
-PASS=your_password
+BAKALARI_USERNAME=PepaZDepa
+BAKALARI_PASS=pepik
+SCHOOL_URL=https://pepova-skola.bakalari.cz
 ```
 
-**Important:** Never share your `.env` file or commit it to version control!
+**Důležité:** `SCHOOL_URL` NESMÍ nikdy končit lomítkem! Program tak nebude fungovat.
+```env
+SCHOOL_URL=https://pepova-skola.bakalari.cz/ #<-- to lomitko na konci tam nesmí být
+```
 
-### 3. Build the Project
+### 4. Build projektu
 
-Compile the TypeScript code to JavaScript:
-
+Stačí zadat tento příkaz pro sestavení:
 ```bash
 npm run build
 ```
 
-### 4. Run the Server
+### 4. Zapněte server
 
-Start the server:
+Pro zapnutí serveru stačí zadat příkaz:
 
 ```bash
-node build/index.js
+npm run start
 ```
 
-## Available Tools
+## Jak to funguje
+
+1. **Příhlášení:** Program získá pomocí `/api/login` access token vašeho účtu který se ukládá do dočasné paměti a po vypnutí serveru zmizí.
+2. **Registrace:** Program registruje všechny nástroje u clienta aby je mohl LLM model používat.
+3. **Získání dat po vyžádání LLM:** Program použije daný API endpoint pro daný nástroj a získá z něj data. U téměř všech nástrojů je potřeba access token získaný u prvniho korku.
+
+## Jak použít
+
+### Jak MCP používat s Claude for Desktop
+Brzy...
+
+### Jak MCP používat s LM Studio
+Brzy...
+
+## Nástroje MVP
 
 ### `get_homeworks`
 
-Fetches homework assignments from Bakalari.
+Získá všechny domácí úkoly případně úkoly od data do data.
 
-**Optional Parameters:**
-- `from` - Start date in YYYY-MM-DD format (e.g., "2024-01-01")
-- `to` - End date in YYYY-MM-DD format (e.g., "2024-12-31")
+**Volitelné parametry:**
+- `from` - od kdy YYYY-MM-DD formát (např., "2025-01-01")
+- `to` - do kdy YYYY-MM-DD formát (např., "2025-12-31")
 
-**Example:**
-```json
-{
-  "from": "2024-11-01",
-  "to": "2024-11-30"
-}
-```
+### `get_all_events`
 
-## Project Structure
+Získá úplně všechny akce školy.
 
-```
-bakalari-mcp/
-├── src/                  # Source code (TypeScript)
-│   ├── index.ts         # Main server file
-│   └── tools/           # Tool implementations
-│       └── homeworks.ts # Homeworks tool
-├── build/               # Compiled code (JavaScript)
-├── .env                 # Your credentials (not in git)
-├── package.json         # Project configuration
-└── README.md           # This file
-```
+**Volitelné parametry:**
+- `from` - od kdy YYYY-MM-DD formát (např., "2025-01-01")
 
-## How It Works
+### `get_user_events`
 
-1. **Login:** The server reads your credentials from the `.env` file
-2. **Authentication:** It logs into Bakalari and gets an access token
-3. **Registration:** It registers available tools (like `get_homeworks`)
-4. **Ready:** The server is now ready to handle requests from MCP clients
+Získá pouze akce školy pro aktualního uživatele.
 
-## Troubleshooting
+**Volitelné parametry:**
+- `from` - od kdy YYYY-MM-DD formát (např., "2025-01-01")
 
-**"Missing or empty environment variable"**
-- Make sure you created a `.env` file with all required variables
+## Řešení problémů
 
-**"Login failed"**
-- Check that your SCHOOL_URL, USERNAME, and PASS are correct
-- Make sure the school URL includes `https://` and ends with `/`
+**"SCHOOL_URL, BAKALARI_USERNAME nebo BAKALARI_PASS chybí v .env souboru"**
+- Zkontrolujte že jste opravdu vyplnily `.env` a je vytvořen.
 
-**TypeScript errors**
-- Run `npm install` to make sure all dependencies are installed
-- Make sure you're using Node.js version 18 or newer
+**"Přihlášení selhalo"**
+- Zkontrolujte že jsou všechny údaje v `.env` správné.
+- Zkontrolujte že SCHOOL_URL v `.env` nekončí lomítkem.
 
-## License
+**TypeScript errory**
+- Spusťte `npm install` pro jistotu kdyby chyběli některé baličky.
+- Ujistěte se že používate správnou verzi node.js (v18 nebo vyšší) pomocí příkazu `node`.
 
-ISC License - see `package.json` for details
+## Nahlášení probémů
+
+Pro nahlášení problému můžete použít [Issues](https://github.com/kredencos/bakalari-mcp/issues) záložku na GitHub.
+
+## Licence
+
+Projekt je pod MIT licencí.
