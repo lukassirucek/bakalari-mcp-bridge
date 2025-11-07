@@ -1,11 +1,42 @@
 {
   "name": "bakalari-mcp",
   "version": "1.0.0",
-  "description": "MCP server pro platformu Bakaláři",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "main": "build/index.js",
+  "type": "module",
+  "bin": {
+    "weather": "./build/index.js"
   },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "node build/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kredencos/bakalari-mcp.git"
+  },
+  "keywords": [
+    "bakalari",
+    "mcp",
+    "modelcontextprotocol",
+    "bakalari-mcp"
+  ],
   "author": "kredencos",
-  "license": "ISC"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kredencos/bakalari-mcp/issues"
+  },
+  "homepage": "https://github.com/kredencos/bakalari-mcp#readme",
+  "description": "",
+  "dependencies": {
+    "@cfworker/json-schema": "^4.1.1",
+    "@modelcontextprotocol/sdk": "^1.21.0",
+    "dotenv": "^17.2.3",
+    "node-fetch": "^3.3.2",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "typescript": "^5.9.3"
+  }
 }
