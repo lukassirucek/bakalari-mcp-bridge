@@ -2,7 +2,7 @@
 
 ### **⚠️ Tento projekt je stále ve vývoji a nové nástroje stále přibívají.**
 
-Jednoduché MCP pro propojení Bakalářů s LLM modely nebo např. Claude for Desktop. Používá [Bakaláři API v3](https://github.com/bakalari-api/bakalari-api-v3/).
+Jednoduché MCP pro propojení Bakalářů s LLM modely například přes Claude for Desktop. Používá [Bakaláři API v3](https://github.com/bakalari-api/bakalari-api-v3/).
 
 ## Co je potřeba
 
