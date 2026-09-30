@@ -1,11 +1,10 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
-import fetch from "node-fetch"
 import { z } from "zod"
+import { BakalariClient, errorResult, jsonResult } from "../api.js"
 
 export default function registerEventsTool(
     server: McpServer,
-    accessToken: string,
-    baseUrl: string
+    client: BakalariClient
 ) {
     server.registerTool(
         "get_all_events",
@@ -17,33 +16,12 @@ export default function registerEventsTool(
         },
         async (args) => {
             try {
-                let url = `${baseUrl}/api/3/events`
-
-                if (args?.from) {
-                    const params = new URLSearchParams()
-                    if (args.from) params.set("from", args.from as string)
-                    url += `?${params}`
-                }
-
-                const response = await fetch(url, {
-                    headers: { "Authorization": `Bearer ${accessToken}` }
+                const data = await client.request("/api/3/events", {
+                    query: { from: args?.from }
                 })
-
-                const data = await response.json()
-
-                return {
-                    content: [{
-                        type: "text" as const,
-                        text: JSON.stringify(data, null, 2)
-                    }]
-                }
+                return jsonResult(data)
             } catch (error: any) {
-                return {
-                    content: [{
-                        type: "text" as const,
-                        text: `Chyba: ${error.message}`
-                    }]
-                }
+                return errorResult(error)
             }
         }
     );
@@ -58,33 +36,12 @@ export default function registerEventsTool(
         },
         async (args) => {
             try {
-                let url = `${baseUrl}/api/3/events/my`
-
-                if (args?.from) {
-                    const params = new URLSearchParams()
-                    if (args.from) params.set("from", args.from as string)
-                    url += `?${params}`
-                }
-
-                const response = await fetch(url, {
-                    headers: { "Authorization": `Bearer ${accessToken}` }
+                const data = await client.request("/api/3/events/my", {
+                    query: { from: args?.from }
                 })
-
-                const data = await response.json()
-
-                return {
-                    content: [{
-                        type: "text" as const,
-                        text: JSON.stringify(data, null, 2)
-                    }]
-                }
+                return jsonResult(data)
             } catch (error: any) {
-                return {
-                    content: [{
-                        type: "text" as const,
-                        text: `Chyba: ${error.message}`
-                    }]
-                }
+                return errorResult(error)
             }
         }
     )

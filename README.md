@@ -93,6 +93,33 @@ Získá pouze akce školy pro aktualního uživatele.
 **Volitelné parametry:**
 - `from` - od kdy YYYY-MM-DD formát (např., "2025-01-01")
 
+### `get_timetable`
+
+Získá aktuální rozvrh pro daný den včetně změn, suplování a zrušených hodin.
+
+**Volitelné parametry:**
+- `date` - den YYYY-MM-DD formát (např., "2025-03-03"), výchozí je dnešek
+
+### `get_permanent_timetable`
+
+Získá stálý rozvrh (základní rozvrh bez změn).
+
+### `get_absence`
+
+Získá absence podle dní a podle předmětů, včetně procenta absence, porovnání s prahem školy a souhrnu.
+
+### `get_marks`
+
+Získá všechny známky podle předmětů včetně průměrů a souhrnu (počet nových známek apod.).
+
+### `get_received_messages`
+
+Získá přijaté zprávy (Komens) od nejnovějších. Text zpráv je převeden z HTML na prostý text. Zprávy se nijak neoznačují jako přečtené.
+
+**Volitelné parametry:**
+- `unread_only` - vrátit pouze nepřečtené zprávy
+- `limit` - maximální počet vrácených zpráv
+
 ## Řešení problémů
 
 **"SCHOOL_URL, BAKALARI_USERNAME nebo BAKALARI_PASS chybí v .env souboru"**
