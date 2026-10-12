@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import dotenv from "dotenv"
 import { fileURLToPath } from "node:url"
 import { dirname, resolve } from "node:path"

@@ -31,7 +31,14 @@ export class BakalariClient {
 			body: formData
 		})
 
-		const data: any = await response.json()
+		const text = await response.text()
+		let data: any
+		try {
+			data = JSON.parse(text)
+		} catch {
+			//nekde API nebezi na korenu domeny, ale treba na /bakaweb
+			throw new Error(`Přihlášení selhalo: ${this.baseUrl}/api/login nevrátil JSON. Zkontrolujte SCHOOL_URL (např. https://skola.bakalari.cz/bakaweb) nebo spusťte "npm run setup".`)
+		}
 
 		if (!response.ok) {
 			const errorMsg = data.error_description || data.error || "neznamá chyba"

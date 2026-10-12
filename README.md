@@ -1,142 +1,121 @@
-# Bakaláři MCP pro LLM Modely
+# Bakaláři MCP Bridge
 
-### **⚠️ Tento projekt je stále ve vývoji a nové nástroje stále přibívají.**
+Propojí školní systém **Bakaláři** s **Claude Desktop** (a volitelně s Claude Code). Claude se pak umí zeptat na rozvrh, známky, absenci, domácí úkoly, akce školy nebo zprávy z Komens, třeba:
 
-Jednoduché MCP pro propojení Bakalářů s LLM modely například přes Claude for Desktop. Používá [Bakaláři API v3](https://github.com/bakalari-api/bakalari-api-v3/).
+- „Jaký mám zítra rozvrh? Odpadá něco?“
+- „Jaké známky přibyly tento týden?“
+- „Mám nepřečtené zprávy od paní učitelky?“
 
-## Co je potřeba
+Používá neoficiální [Bakaláři API v3](https://github.com/bakalari-api/bakalari-api-v3). Všechny nástroje data jen čtou: nic neodesílají, nemažou ani neoznačují zprávy jako přečtené.
 
-- **Node.js** verze 18 nebo novější
-- **npm** (defalutně v node.js)
-- Funkční účet na Bakalářích
+## Instalace
 
-## Jak nastavit
+**Potřebujete:** [Node.js](https://nodejs.org) 18 nebo novější (verze LTS), [git](https://git-scm.com), [Claude Desktop](https://claude.ai/download) a přihlašovací údaje do Bakalářů (žákovské nebo rodičovské).
 
-### 1. Stáhněte repo
+### macOS / Linux
 
-Stáhněte si repo pomocí tlačítka "Code" -> "Download ZIP" nebo pomocí GITu:
+Otevřete Terminál a spusťte:
+
 ```bash
-git clone https://github.com/kredencos/bakalari-mcp.git
+curl -fsSL https://raw.githubusercontent.com/lukassirucek/bakalari-mcp-bridge/main/install.sh | bash
 ```
 
-### 2. Stáhněte balíčky
+### Windows
 
-Pro stáhnutí všech balíčku stačí zadat příkaz:
+Otevřete PowerShell a spusťte:
+
+```powershell
+irm https://raw.githubusercontent.com/lukassirucek/bakalari-mcp-bridge/main/install.ps1 | iex
+```
+
+Skripty si můžete před spuštěním prohlédnout: [`install.sh`](install.sh), [`install.ps1`](install.ps1).
+
+### Co instalátor udělá
+
+1. Zkontroluje, že máte git a Node.js 18+.
+2. Stáhne projekt do `~/.bakalari-mcp-bridge` (Windows: `%LOCALAPPDATA%\bakalari-mcp-bridge`). Jinou složku nastavíte proměnnou `BAKALARI_MCP_DIR`.
+3. Nainstaluje balíčky a projekt sestaví.
+4. Spustí průvodce nastavením, který:
+   - se zeptá na adresu Bakalářů vaší školy. Stačí doména (`skola.bakalari.cz`) nebo adresa zkopírovaná z prohlížeče. Průvodce sám najde, kde API běží (např. `/bakaweb`).
+   - se zeptá na jméno a heslo a ověří, že přihlášení funguje.
+   - uloží údaje do souboru `.env` ve složce projektu (na macOS a Linuxu čitelný jen pro vás).
+   - zapíše server `bakalari` do konfigurace Claude Desktop (předtím vytvoří zálohu) a pokud máte Claude Code, nabídne registraci i tam.
+
+Nakonec **úplně ukončete Claude Desktop** (macOS: ⌘Q, Windows: pravým tlačítkem na ikonu v oznamovací oblasti → Quit) a znovu ho spusťte. V nabídce nástrojů se objeví server `bakalari`.
+
+### Aktualizace, změna údajů, odinstalace
+
+| Co | Jak |
+|---|---|
+| Aktualizovat na novou verzi | Spusťte instalační příkaz znovu |
+| Změnit školu, jméno nebo heslo | Ve složce projektu: `npm run setup` |
+| Odinstalovat | Ve složce projektu: `npm run setup -- --uninstall`, pak složku smažte |
+
+## Bezpečnost a soukromí
+
+- Heslo je uložené jen ve vašem počítači v souboru `.env` ve složce projektu. Do konfigurace Claude Desktop se nezapisuje a server ho posílá výhradně na server Bakalářů vaší školy.
+- Data z Bakalářů (známky, zprávy, …) dostane Claude až ve chvíli, kdy se na ně v konverzaci zeptáte.
+
+## Nástroje
+
+| Nástroj | Popis | Volitelné parametry |
+|---|---|---|
+| `get_timetable` | Aktuální rozvrh na daný den včetně změn, suplování a zrušených hodin | `date` (YYYY-MM-DD, výchozí dnešek) |
+| `get_permanent_timetable` | Stálý rozvrh bez změn | – |
+| `get_marks` | Známky podle předmětů, průměry a souhrn (např. počet nových známek) | – |
+| `get_absence` | Absence podle dní a předmětů, procento absence a porovnání s prahem školy | – |
+| `get_homeworks` | Domácí úkoly | `from`, `to` (YYYY-MM-DD) |
+| `get_all_events` | Všechny akce školy | `from` (YYYY-MM-DD) |
+| `get_user_events` | Akce školy týkající se přihlášeného uživatele | `from` (YYYY-MM-DD) |
+| `get_received_messages` | Přijaté zprávy Komens od nejnovějších, text převedený z HTML | `unread_only`, `limit` |
+
+## Ruční instalace
+
 ```bash
-npm install
-```
-
-### 3. Nastavte .env
-
-Stačí přepsat název souboru `.env.example` na `.env` a upravte hodnoty. Příklad:
-```env
-BAKALARI_USERNAME=PepaZDepa
-BAKALARI_PASS=pepik
-SCHOOL_URL=https://pepova-skola.bakalari.cz
-```
-
-**Důležité:** `SCHOOL_URL` NESMÍ nikdy končit lomítkem! Program tak nebude fungovat.
-```env
-SCHOOL_URL=https://pepova-skola.bakalari.cz/ #<-- to lomitko na konci tam nesmí být
-```
-
-### 4. Build projektu
-
-Stačí zadat tento příkaz pro sestavení:
-```bash
+git clone https://github.com/lukassirucek/bakalari-mcp-bridge.git
+cd bakalari-mcp-bridge
+npm ci
 npm run build
+npm run setup
 ```
 
-### 4. Zapněte server
+Bez průvodce: zkopírujte `.env.example` do `.env`, vyplňte hodnoty a do konfigurace Claude Desktop přidejte:
 
-Pro zapnutí serveru stačí zadat příkaz:
-
-```bash
-npm run start
+```json
+{
+  "mcpServers": {
+    "bakalari": {
+      "command": "node",
+      "args": ["/cesta/k/bakalari-mcp-bridge/build/index.js"]
+    }
+  }
+}
 ```
 
-## Jak to funguje
-
-1. **Příhlášení:** Program získá pomocí `/api/login` access token vašeho účtu který se ukládá do dočasné paměti a po vypnutí serveru zmizí.
-2. **Registrace:** Program registruje všechny nástroje u clienta aby je mohl LLM model používat.
-3. **Získání dat po vyžádání LLM:** Program použije daný API endpoint pro daný nástroj a získá z něj data. U téměř všech nástrojů je potřeba access token získaný u prvniho korku.
-
-## Jak použít
-
-### Jak MCP používat s Claude for Desktop
-Brzy...
-
-### Jak MCP používat s LM Studio
-Brzy...
-
-## Nástroje MVP
-
-### `get_homeworks`
-
-Získá všechny domácí úkoly případně úkoly od data do data.
-
-**Volitelné parametry:**
-- `from` - od kdy YYYY-MM-DD formát (např., "2025-01-01")
-- `to` - do kdy YYYY-MM-DD formát (např., "2025-12-31")
-
-### `get_all_events`
-
-Získá úplně všechny akce školy.
-
-**Volitelné parametry:**
-- `from` - od kdy YYYY-MM-DD formát (např., "2025-01-01")
-
-### `get_user_events`
-
-Získá pouze akce školy pro aktualního uživatele.
-
-**Volitelné parametry:**
-- `from` - od kdy YYYY-MM-DD formát (např., "2025-01-01")
-
-### `get_timetable`
-
-Získá aktuální rozvrh pro daný den včetně změn, suplování a zrušených hodin.
-
-**Volitelné parametry:**
-- `date` - den YYYY-MM-DD formát (např., "2025-03-03"), výchozí je dnešek
-
-### `get_permanent_timetable`
-
-Získá stálý rozvrh (základní rozvrh bez změn).
-
-### `get_absence`
-
-Získá absence podle dní a podle předmětů, včetně procenta absence, porovnání s prahem školy a souhrnu.
-
-### `get_marks`
-
-Získá všechny známky podle předmětů včetně průměrů a souhrnu (počet nových známek apod.).
-
-### `get_received_messages`
-
-Získá přijaté zprávy (Komens) od nejnovějších. Text zpráv je převeden z HTML na prostý text. Zprávy se nijak neoznačují jako přečtené.
-
-**Volitelné parametry:**
-- `unread_only` - vrátit pouze nepřečtené zprávy
-- `limit` - maximální počet vrácených zpráv
+Konfigurace je na macOS v `~/Library/Application Support/Claude/claude_desktop_config.json`, na Windows v `%APPDATA%\Claude\claude_desktop_config.json`. Pokud Claude Desktop nenajde `node`, uveďte plnou cestu (`which node` nebo `where node`).
 
 ## Řešení problémů
 
-**"SCHOOL_URL, BAKALARI_USERNAME nebo BAKALARI_PASS chybí v .env souboru"**
-- Zkontrolujte že jste opravdu vyplnily `.env` a je vytvořen.
+**Server se v Claude Desktop neobjevil.** Ukončili jste Claude Desktop úplně, ne jen zavřeli okno? Pak se podívejte do logu:
+- macOS: `~/Library/Logs/Claude/mcp-server-bakalari.log`
+- Windows: `%APPDATA%\Claude\logs\mcp-server-bakalari.log`
 
-**"Přihlášení selhalo"**
-- Zkontrolujte že jsou všechny údaje v `.env` správné.
-- Zkontrolujte že SCHOOL_URL v `.env` nekončí lomítkem.
+**„Přihlášení selhalo: … nevrátil JSON“.** U některých škol API neběží přímo na doméně, ale např. na `https://skola.bakalari.cz/bakaweb`. Spusťte `npm run setup`, průvodce správnou adresu najde sám.
 
-**TypeScript errory**
-- Spusťte `npm install` pro jistotu kdyby chyběli některé baličky.
-- Ujistěte se že používate správnou verzi node.js (v18 nebo vyšší) pomocí příkazu `node`.
+**„Přihlášení selhalo: Špatný login nebo heslo“.** Ověřte si údaje přihlášením na webu Bakalářů a pak spusťte `npm run setup`.
 
-## Nahlášení probémů
+**Instalace hlásí starý Node.js.** Nainstalujte aktuální verzi LTS z [nodejs.org](https://nodejs.org) a spusťte instalaci znovu.
 
-Pro nahlášení problému můžete použít [Issues](https://github.com/kredencos/bakalari-mcp/issues) záložku na GitHub.
+Další problémy hlaste v [Issues](https://github.com/lukassirucek/bakalari-mcp-bridge/issues).
+
+## Poděkování
+
+- [kredencos/bakalari-mcp](https://github.com/kredencos/bakalari-mcp): původní TypeScript MCP server, ze kterého tento projekt vychází (MIT)
+- [mirecekd/bakalari-mcp](https://github.com/mirecekd/bakalari-mcp): nástroje pro rozvrh, absenci a známky převzaté z jeho Python verze (MIT)
+- [bakalari-api/bakalari-api-v3](https://github.com/bakalari-api/bakalari-api-v3): komunitní dokumentace API Bakalářů
+
+Projekt není nijak spojen se společností BAKALÁŘI software s.r.o.
 
 ## Licence
 
-Projekt je pod MIT licencí.
+[MIT](LICENSE)

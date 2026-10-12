@@ -1,19 +1,23 @@
 {
-  "name": "bakalari-mcp",
+  "name": "bakalari-mcp-bridge",
   "version": "1.0.0",
-  "main": "build/index.js",
+  "description": "MCP server propojující Bakaláři (API v3) s Claude Desktop a Claude Code",
   "type": "module",
+  "main": "build/index.js",
   "bin": {
-    "weather": "./build/index.js"
+    "bakalari-mcp-bridge": "./build/index.js"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "node build/index.js"
+    "start": "node build/index.js",
+    "setup": "node scripts/setup.mjs"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kredencos/bakalari-mcp.git"
+    "url": "git+https://github.com/lukassirucek/bakalari-mcp-bridge.git"
   },
   "keywords": [
     "bakalari",
@@ -21,13 +25,16 @@
     "modelcontextprotocol",
     "bakalari-mcp"
   ],
-  "author": "kredencos",
+  "author": "lukassirucek",
+  "contributors": [
+    "kredencos (https://github.com/kredencos/bakalari-mcp)",
+    "mirecekd (https://github.com/mirecekd/bakalari-mcp)"
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kredencos/bakalari-mcp/issues"
+    "url": "https://github.com/lukassirucek/bakalari-mcp-bridge/issues"
   },
-  "homepage": "https://github.com/kredencos/bakalari-mcp#readme",
-  "description": "",
+  "homepage": "https://github.com/lukassirucek/bakalari-mcp-bridge#readme",
   "dependencies": {
     "@cfworker/json-schema": "^4.1.1",
     "@modelcontextprotocol/sdk": "^1.21.0",
